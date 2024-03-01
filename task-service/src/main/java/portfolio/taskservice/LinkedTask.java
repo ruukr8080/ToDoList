@@ -3,7 +3,7 @@ package portfolio.taskservice;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class LinkedTask<TaskData> implements List<TaskData> {
+public class LinkedTask<TaskData> {
     private TaskNode<TaskData> head;
     private TaskNode<TaskData> tail;
     private int size;
@@ -69,7 +69,7 @@ public class LinkedTask<TaskData> implements List<TaskData> {
         }
     }
 
-    @Override
+//    @Override
     public boolean add (TaskData value) {
         addLast(value);
         return true;
@@ -146,6 +146,200 @@ public class LinkedTask<TaskData> implements List<TaskData> {
         TaskData elem = headNode.data;
 
         // head의 다음 노드
-        TaskNode
+        TaskNode<TaskData> nextNode = head.next;
+
+        // head 노드의 데이터들을 모두 삭제
+        head.data = null;
+        head.next = null;
+
+        /**
+         * head의 다음노드(=nextNode)가 null이 아닐 경우에만
+         * prev 변수를 null로 업데이트 해주어야 한다.
+         * 이유는 nextNode가 없는 경우(null)는 데이터가
+         * 아무 것도 없던 상태였으므로 nextNode.prev를 하면 잘못된 참조가 된다.
+         */
+        if(nextNode != null) {
+            nextNode.prev = null;
+        }
+
+        head = nextNode;
+        size--;
+
+        /**
+         * 삭제된 요소가 리스트의 유일한 요소였을 경우
+         * 그 요소는 head 이자 tail이었으므로
+         * 삭제되면서 tail도 가리킬 요소가 없기 때문에
+         * size가 0일경우 tail도 null로 변환
+         */
+        if(size == 0) {
+            tail = null;
+        }
+
+        return elem;
+    }
+
+//    @Override
+    public TaskData remove(int idx) {
+
+        if (idx >= size || idx < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        // 삭제하려는 노드가 첫번째 노드일 경우
+        if (idx == 0) {
+            TaskData elem = head.data;
+            remove();
+            return elem;
+        }
+
+        TaskNode<TaskData> prevNode = search(idx - 1); // 삭제할 노드의 이전 노드
+        TaskNode<TaskData> removedNode = prevNode.next; // 삭제할 노드
+        TaskNode<TaskData> nextNode = removedNode.next; // 삭제할 노드의 다음 노드
+
+        TaskData elem = removedNode.data; // 삭제되는 노드의 데이터를 반환하기 위한 임ㅁ시 변수;
+
+        /**
+         * index == 0 일 때의 조건에서 이미 head노드의 삭제에 대한 분기가 있기 때문에
+         * prevNode는 항상 존재한다.
+         *
+         * 그러나 nextNode의 경우는 null일 수 있기 때문에 (= 마지막 노드를 삭제하려는 경우)
+         * 이전처럼 반드시 검사를 해준 뒤, nextNode.prev에 접근해야 한다.
+         */
+
+        prevNode.next = null;
+        removedNode.next = null;
+        removedNode.prev = null;
+        removedNode.data = null;
+
+        if(nextNode != null) {
+            nextNode.prev = null;
+
+            nextNode.prev = prevNode;
+            prevNode.next = nextNode;
+        }
+        /**
+         *  nextNode가 null이라는 것은 마지막 노드를 삭제했다는 의미이므로
+         *  prevNode가 tail이 된다. (연결 해줄 것이 없음)
+         */
+        else {
+            tail = prevNode;
+        }
+
+        size--;
+
+        return elem;
+
+    }
+
+//    @Override
+    public boolean remove(Object value) {
+        TaskNode<TaskData> prevNode = head;
+        TaskNode<TaskData> x = head;  // removedNode
+
+        // value와 일치하는 노드를 찾는다.
+        for (; x != null; x = x.next) {
+            if (value.equals(x.data)) {
+                break;
+            }
+            prevNode = x;
+        }
+
+        // 일치하는 요소가 없을 경우 false 반환;
+        if (x == null) {
+            return false;
+        }
+
+        // 삭제하려는 노드가 head일 경우 remove()로 삭제
+        if (x.equals(head)) {
+            remove();
+            return true;
+        }
+
+        // remove(int idx)와 같은 메커니즘으로 삭제
+        else {
+            TaskNode<TaskData> nextNode = x.next;
+
+            prevNode.next = null;
+            x.data = null;
+            x.next = null;
+            x.prev = null;
+
+            if (nextNode != null) {
+                nextNode.prev = null;
+
+                nextNode.prev = prevNode;
+                prevNode.next = nextNode;
+            } else {
+                tail = prevNode;
+            }
+
+            size--;
+            return true;
+        }
+    }
+
+//    @Override
+    public TaskData get(int idx) {
+        return search(idx).data;
+    }
+
+
+//    @Override
+    public void set(int idx, TaskData value) {
+        TaskNode<TaskData> replaceNode = search(idx);
+        replaceNode.data = null;
+        replaceNode.data = value;
+    }
+
+//    @Override
+    public int indexOf(Object o) {
+        int idx = 0;
+
+        for(TaskNode<TaskData> x = head; x != null; x = x.next) {
+            if (o.equals(x.data)) {
+                return idx;
+            }
+            idx++;
+        }
+        return -1;
+    }
+
+    public int lastIndexOf(Object o) {
+        int idx = size;
+        for(TaskNode<TaskData> x = tail; x!=null; x = x.prev) {
+            idx --;
+            if(o.equals(x.data)) {
+                return idx;
+            }
+        }
+        return -1;
+    }
+
+//    @Override
+    public boolean contains(Object item) {
+        return indexOf(item) >=0;
+    }
+
+//    @Override
+    public int size() {
+        return size;
+    }
+
+//    @Override
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+//    @Override
+    public void clear() {
+        for (TaskNode<TaskData> x = head; x!= null;) {
+            TaskNode<TaskData> nextNode = x.next;
+            x.data = null;
+            x.next = null;
+            x.prev = null;
+            x = nextNode;
+        }
+        head = tail = null;
+        size = 0;
     }
 }
