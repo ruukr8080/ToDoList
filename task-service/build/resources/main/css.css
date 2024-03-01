@@ -1,0 +1,71 @@
+@import url("https://fonts.googleapis.com/css?family=Varela+Round");
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500&display=swap');
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+:root{
+    --background1: #181818; /*어두움*/
+    --background2:#252525; /*밝음*/
+    --line:#524f4fa8;
+    --font1:#808080;
+    --font2:#c7ac54;    
+    --font3:#cac3c3;
+    --shadow:rgba(0.6, 0.6, 0.6, 0.6); /* 그림자 */
+}
+/* 데스크톱 스타일 */
+*,
+*::after,
+*::before{
+    font-size: 12px;
+    letter-spacing: 1.1px;
+    font-family: "Varela Round", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    list-style: none;
+    background-repeat: no-repeat;
+    letter-spacing: 1px;
+    grid-gap:0;
+}
+body {
+    overflow: hidden;
+    max-height: 100vh;
+    min-height: 100vh;
+    width: 100vw;
+    text-align: center;
+    display: grid;
+    grid-template-columns: 25vw 50vw 25vw;
+    grid-template-rows:20vh 20vh 10vh 15vh 50vh;
+    grid-template-areas:  ". head ."
+                          ". time ."
+                          ". input ."
+                          ". tag ."
+                          ". list .";
+
+}
+
+.grid-time {
+    grid-area:time;
+}
+.js-time {
+    text-align: center;
+    font-size: 100px;
+}
+.grid-form{
+    height:fit-content;
+    transform: translateY(150%);
+    margin: 0 auto;
+    grid-area:input;
+}
+.grid-tag {
+    grid-area: tag;
+}
+.grid-list{
+    grid-area: list;
+}
+button{
+    border: 0;
+    background: none;
+    color : #a1a1a1;
+    text-decoration: none;
+    font-weight:bolder;
+    cursor:pointer;
+}
